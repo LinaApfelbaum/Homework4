@@ -48,3 +48,7 @@ def browser(request):
 @pytest.fixture()
 def base_url(request):
     return request.config.getoption("url")
+
+@pytest.fixture()
+def opencart_base_url():
+    return "https://demo.opencart.com"
