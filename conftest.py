@@ -29,8 +29,10 @@ def browser(request):
             executable_path=drivers_path + "/chromedriver", options=options)
 
     elif browser == "opera":
+        if headless:
+            raise NotImplementedError("This mode is not supported")
+
         options = Options()
-        options.headless = headless
         driver = webdriver.Opera(
             executable_path=drivers_path + "/operadriver", options=options)
     elif browser == "firefox":
