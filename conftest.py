@@ -18,9 +18,9 @@ def pytest_addoption(parser):
 
 @pytest.fixture()
 def browser(request):
-    drivers_path = request.config.getoption("drivers_path")
-    browser = request.config.getoption("browser")
-    headless = request.config.getoption("headless")
+    drivers_path = request.config.getoption("--drivers_path")
+    browser = request.config.getoption("--browser")
+    headless = request.config.getoption("--headless")
 
     if browser == "chrome":
         options = webdriver.ChromeOptions()
