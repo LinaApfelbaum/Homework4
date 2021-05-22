@@ -1,4 +1,5 @@
-from framework import *
+from framework import wait_element_by_partial_link_text, wait_element_by_tag_name, wait_element_by_xpath, \
+    wait_element_by_css_selector
 
 
 def test_product(browser, opencart_base_url):

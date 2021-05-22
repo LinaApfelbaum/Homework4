@@ -1,4 +1,4 @@
-from framework import *
+from framework import wait_element_by_link_text, wait_element_by_css_selector, wait_element_by_xpath
 
 
 def test_login_page(browser, opencart_base_url):
