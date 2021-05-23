@@ -1,12 +1,10 @@
-from framework import wait_element_by
-from page_objects.login_page import LoginPage
+from framework import get_element
 
 
-def test_login_page(browser, opencart_base_url):
-    login_page = LoginPage(browser)
+def test_login_page(browser, opencart_base_url, login_page):
     login_page.open(opencart_base_url)
-    wait_element_by(browser, login_page.EMAIL_FIELD)
-    wait_element_by(browser, login_page.PASSWORD_FIELD)
-    wait_element_by(browser, login_page.FORGOTTEN_PASSWORD_LINK)
-    wait_element_by(browser, login_page.NEW_CUSTOMER_BLOCK)
-    wait_element_by(browser, login_page.RETURNING_CUSTOMER_BLOCK)
+    get_element(browser, login_page.EMAIL_FIELD)
+    get_element(browser, login_page.PASSWORD_FIELD)
+    get_element(browser, login_page.FORGOTTEN_PASSWORD_LINK)
+    get_element(browser, login_page.NEW_CUSTOMER_BLOCK)
+    get_element(browser, login_page.RETURNING_CUSTOMER_BLOCK)

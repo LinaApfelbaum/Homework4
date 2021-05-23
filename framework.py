@@ -3,8 +3,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def wait_element_by(driver, locator, timeout=1):
-    WebDriverWait(driver, timeout).until(
+def get_element(driver, locator, timeout=1):
+    return WebDriverWait(driver, timeout).until(
         EC.visibility_of_element_located(locator))
 
 

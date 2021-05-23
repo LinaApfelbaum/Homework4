@@ -1,15 +1,17 @@
 from selenium.webdriver.common.by import By
 
+from framework import get_element
+
 
 class AdminPage:
-    HEADER_LOGO = (By.CSS_SELECTOR, "#header-logo")
-    USERNAME_FIELD = (By.CSS_SELECTOR, "#input-username")
-    LOGIN_BUTTON = (By.CSS_SELECTOR, ".btn-primary")
-    HINT_BLOCK = (By.CSS_SELECTOR, ".help-block")
-    FORGOTTEN_PASSWORD_LINK = (By.CSS_SELECTOR, '.help-block > a')
+    MENU_CATALOG = (By.CSS_SELECTOR, "#menu-catalog")
+    SUBMENU_PRODUCTS = (By.CSS_SELECTOR, "#collapse1 > li:nth-child(2)")
 
     def __init__(self, driver):
         self.driver = driver
 
-    def open(self, url):
-        self.driver.get(url + "/admin")
+    def open_menu(self, menu_locator):
+        get_element(self.driver, menu_locator).click()
+
+    def open_sub_menu(self, submenu_locator):
+        get_element(self.driver, submenu_locator).click()
