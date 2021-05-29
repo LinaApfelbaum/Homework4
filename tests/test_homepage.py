@@ -1,11 +1,10 @@
-from framework import wait_element_by_link_text, wait_element_by_css_selector, wait_element_by_xpath, \
-    wait_element_by_id, wait_element_by_class_name
+from framework import get_element
 
 
-def test_homepage(browser, opencart_base_url):
-    browser.get(opencart_base_url)
-    wait_element_by_link_text(browser, 'Desktops')
-    wait_element_by_css_selector(browser, '#search input')
-    wait_element_by_xpath(browser, '/html/body/footer/div/p/a')
-    wait_element_by_id(browser, 'search')
-    wait_element_by_class_name(browser, 'dropdown-toggle')
+def test_homepage(browser, opencart_base_url, home_page):
+    home_page.open(opencart_base_url)
+    get_element(browser, home_page.MENU)
+    get_element(browser, home_page.SLIDER)
+    get_element(browser, home_page.SLIDER_PAGINATION)
+    get_element(browser, home_page.BRANDS_SLIDER)
+    get_element(browser, home_page.FEATURED_HEADER)
