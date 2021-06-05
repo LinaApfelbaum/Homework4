@@ -1,7 +1,11 @@
+import logging
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.opera.options import Options
+from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
 
+from browser_log_listener import BrowserLogListener
 from page_objects.admin_add_product_page import AdminAddProductPage
 from page_objects.admin_login_page import AdminLoginPage
 from page_objects.admin_page import AdminPage
@@ -34,6 +38,7 @@ def browser(request):
     drivers_path = request.config.getoption("--drivers_path")
     browser = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")
+    logger = logging.getLogger('BrowserLogger')
 
     if browser == "chrome":
         options = webdriver.ChromeOptions()
@@ -55,6 +60,8 @@ def browser(request):
             executable_path=drivers_path + "/geckodriver", options=options)
     else:
         raise ValueError("Browser is not supported")
+
+    driver = EventFiringWebDriver(driver, BrowserLogListener(logger))
 
     request.addfinalizer(driver.quit)
     return driver
