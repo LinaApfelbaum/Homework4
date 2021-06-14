@@ -1,6 +1,9 @@
 from framework import get_element
+import allure
 
 
+@allure.title("Search for elements on the Catalog page")
+@allure.description("Test checks that 5 elements are presented on the Catalog page")
 def test_catalog(browser, opencart_base_url, catalog_page):
     catalog_page.open(opencart_base_url, 20)
     get_element(browser, catalog_page.BREADCRUMBS)
