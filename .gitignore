@@ -131,3 +131,6 @@ dmypy.json
 .env/
 .venv/
 /logs
+
+# Allure-results dir
+/allure-results
