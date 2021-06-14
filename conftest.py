@@ -1,5 +1,5 @@
 import logging
-
+import allure
 import pytest
 from selenium import webdriver
 from selenium.webdriver.opera.options import Options
@@ -108,6 +108,29 @@ def create_local_driver(request):
     request.addfinalizer(driver.quit)
 
     return driver
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item):
+    # execute all other hooks to obtain the report object
+    outcome = yield
+    rep = outcome.get_result()
+
+    # set a report attribute for each phase of a call, which can
+    # be "setup", "call", "teardown"
+
+    setattr(item, "rep_" + rep.when, rep)
+
+
+@pytest.fixture(scope="function", autouse=True)
+def test_failed_check(browser, request):
+    yield
+    if request.node.rep_call.failed:
+        allure.attach(
+            browser.get_screenshot_as_png(),
+            name='Screenshot',
+            attachment_type=allure.attachment_type.PNG
+        )
 
 
 @pytest.fixture()
