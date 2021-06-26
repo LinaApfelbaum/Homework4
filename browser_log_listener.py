@@ -12,10 +12,10 @@ class BrowserLogListener(AbstractEventListener):
         self.logger.info(f"I'm on {url}")
 
     def before_navigate_back(self, driver):
-        self.logger.info(f"I'm navigating back")
+        self.logger.info("I'm navigating back")
 
     def after_navigate_back(self, driver):
-        self.logger.info(f"I'm back!")
+        self.logger.info("I'm back!")
 
     def before_find(self, by, value, driver):
         self.logger.info(f"I'm looking for '{value}' with '{by}'")
@@ -39,7 +39,7 @@ class BrowserLogListener(AbstractEventListener):
         self.logger.info(f"I'm getting ready to terminate {driver}")
 
     def after_quit(self, driver):
-        self.logger.info(f"Browser closed")
+        self.logger.info("Browser closed")
 
     def on_exception(self, exception, driver):
         self.logger.error(f"Oooops i got: {exception}")
