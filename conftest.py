@@ -1,7 +1,11 @@
+import logging
+import allure
 import pytest
 from selenium import webdriver
 from selenium.webdriver.opera.options import Options
+from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
 
+from browser_log_listener import BrowserLogListener
 from page_objects.admin_add_product_page import AdminAddProductPage
 from page_objects.admin_login_page import AdminLoginPage
 from page_objects.admin_page import AdminPage
@@ -27,13 +31,58 @@ def pytest_addoption(parser):
         "--opencart_url", action="store", default="https://demo.opencart.com", help="OpenCart base URL"
     )
     parser.addoption("--headless", action="store_true", help="Run headless")
+    parser.addoption("--executor", action="store",
+                     default="127.0.0.1:4444", help="Use 'local' to run tests locally")
+    parser.addoption("--browser_version", action="store", default="91.0")
+    parser.addoption("--vnc", action="store_true", default=False)
+    parser.addoption("--logs", action="store_true", default=False)
 
 
 @pytest.fixture()
 def browser(request):
+    browser_name = request.config.getoption("--browser")
+    executor = request.config.getoption("--executor")
+    version = request.config.getoption("--browser_version")
+    vnc = request.config.getoption("--vnc")
+    logs = request.config.getoption("--logs")
+
+    logger = logging.getLogger('BrowserLogger')
+    log_file_handler = logging.FileHandler('logs/browser.log')
+    logger.addHandler(log_file_handler)
+    logger.setLevel(logging.INFO)
+
+    if executor == "local":
+        driver = create_local_driver(request)
+    else:
+        caps = {
+            "browserName": browser_name,
+            "browserVersion": version,
+            # "screenResolution": "1280x720",
+            "name": "Duck",
+            "selenoid:options": {
+                "enableVNC": vnc,
+                "enableVideo": False,
+                "enableLog": logs
+            },
+            # 'acceptSslCerts': True,
+            # 'acceptInsecureCerts': True,
+            # 'timeZone': 'Europe/Moscow',
+            'goog:chromeOptions': {}
+        }
+        driver = webdriver.Remote(
+            command_executor=f"http://{executor}/wd/hub",
+            desired_capabilities=caps
+        )
+
+    driver = EventFiringWebDriver(driver, BrowserLogListener(logger))
+
+    return driver
+
+
+def create_local_driver(request):
     drivers_path = request.config.getoption("--drivers_path")
-    browser = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")
+    browser = request.config.getoption("--browser")
 
     if browser == "chrome":
         options = webdriver.ChromeOptions()
@@ -57,52 +106,87 @@ def browser(request):
         raise ValueError("Browser is not supported")
 
     request.addfinalizer(driver.quit)
+
     return driver
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item):
+    # execute all other hooks to obtain the report object
+    outcome = yield
+    rep = outcome.get_result()
+
+    # set a report attribute for each phase of a call, which can
+    # be "setup", "call", "teardown"
+
+    setattr(item, "rep_" + rep.when, rep)
+
+
+@pytest.fixture(scope="function", autouse=True)
+def test_failed_check(browser, request):
+    yield
+    if request.node.rep_call.failed:
+        allure.attach(
+            browser.get_screenshot_as_png(),
+            name='Screenshot',
+            attachment_type=allure.attachment_type.PNG
+        )
 
 
 @pytest.fixture()
 def base_url(request):
     return request.config.getoption("--url")
 
+
 @pytest.fixture()
 def opencart_base_url(request):
     return request.config.getoption("--opencart_url")
+
 
 @pytest.fixture()
 def admin_credentials():
     return {"login": "user", "password": "bitnami"}
 
+
 @pytest.fixture()
 def admin_login_page(browser):
     return AdminLoginPage(browser)
+
 
 @pytest.fixture()
 def admin_page(browser):
     return AdminPage(browser)
 
+
 @pytest.fixture()
 def products_page(browser):
     return AdminProductsPage(browser)
+
 
 @pytest.fixture()
 def product_add_page(browser):
     return AdminAddProductPage(browser)
 
+
 @pytest.fixture()
 def catalog_page(browser):
     return CatalogPage(browser)
+
 
 @pytest.fixture()
 def home_page(browser):
     return HomePage(browser)
 
+
 @pytest.fixture()
 def login_page(browser):
     return LoginPage(browser)
 
+
 @pytest.fixture()
 def product_page(browser):
     return ProductPage(browser)
+
 
 @pytest.fixture()
 def sign_up_page(browser):

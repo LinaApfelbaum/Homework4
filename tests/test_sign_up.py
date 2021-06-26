@@ -1,6 +1,9 @@
+import allure
 import time
 
 
+@allure.title("Sign up into Opencart")
+@allure.description("Test checks that user is able to register an account")
 def test_sign_up(browser, opencart_base_url, sign_up_page):
     sign_up_page.open(opencart_base_url)
     unique_email = "unique_email{}@example.com".format(time.time())
