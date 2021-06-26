@@ -40,7 +40,7 @@ def pytest_addoption(parser):
 
 @pytest.fixture()
 def browser(request):
-    browser = request.config.getoption("--browser")
+    browser_name = request.config.getoption("--browser")
     executor = request.config.getoption("--executor")
     version = request.config.getoption("--browser_version")
     vnc = request.config.getoption("--vnc")
@@ -55,7 +55,7 @@ def browser(request):
         driver = create_local_driver(request)
     else:
         caps = {
-            "browserName": browser,
+            "browserName": browser_name,
             "browserVersion": version,
             # "screenResolution": "1280x720",
             "name": "Duck",
