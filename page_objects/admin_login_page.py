@@ -15,7 +15,7 @@ class AdminLoginPage:
         self.driver = driver
 
     def open(self, url):
-        self.driver.get(url + "/admin")
+        self.driver.get(url + "/admin/")
 
     def login(self, username, password):
         get_element(self.driver, self.USERNAME_FIELD).send_keys(username)
